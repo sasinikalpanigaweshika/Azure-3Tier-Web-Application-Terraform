@@ -368,3 +368,47 @@ Please follow the standard Git workflow:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+## CI/CD Pipeline
+
+This project includes a GitHub Actions CI/CD pipeline that automatically:
+- Builds Docker images for frontend and backend
+- Pushes images to Docker Hub on every commit to main branch
+
+## Tech Stack
+- Terraform (IaC)
+- Azure (VM Scale Sets, App Gateway, WAF, Key Vault, PostgreSQL)
+- Docker + Docker Hub
+- GitHub Actions (CI/CD)
+- Node.js (Frontend)
+- Go (Backend)
+- PostgreSQL (Database)
+
+## CI/CD Pipeline
+
+This project includes a GitHub Actions CI/CD pipeline that automatically:
+- Builds Docker images for frontend and backend
+- Pushes images to Docker Hub on every commit to main branch
+
+## Tech Stack
+- Terraform (IaC)
+- Azure (VM Scale Sets, App Gateway, WAF, Key Vault, PostgreSQL)
+- Docker + Docker Hub
+- GitHub Actions (CI/CD)
+- Node.js (Frontend)
+- Go (Backend)
+- PostgreSQL (Database)
+
+## CI/CD Pipeline
+
+This project includes a GitHub Actions CI/CD pipeline that automatically:
+- Builds Docker images for frontend and backend
+- Pushes images to Docker Hub on every commit to main branch
+
+## Tech Stack
+- Terraform (IaC)
+- Azure (VM Scale Sets, App Gateway, WAF, Key Vault, PostgreSQL)
+- Docker + Docker Hub
+- GitHub Actions (CI/CD)
+- Node.js (Frontend)
+- Go (Backend)
+- PostgreSQL (Database)
