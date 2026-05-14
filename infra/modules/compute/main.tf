@@ -54,30 +54,6 @@ resource "tls_private_key" "ssh" {
   rsa_bits  = 4096
 }
 
-# WAF Policy for Application Gateway
-resource "azurerm_web_application_firewall_policy" "frontend" {
-  count               = var.is_frontend ? 1 : 0
-  name                = "${var.resource_name_prefix}-waf-policy"
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  tags                = var.tags
-
-  policy_settings {
-    enabled                     = true
-    mode                        = "Prevention"
-    request_body_check          = true
-    max_request_body_size_in_kb = 128
-    file_upload_limit_in_mb     = 100
-  }
-
-  managed_rules {
-    managed_rule_set {
-      type    = "OWASP"
-      version = "3.2"
-    }
-  }
-}
-
 # Public IP for Load Balancer (Frontend only)
 resource "azurerm_public_ip" "lb" {
   count               = var.is_frontend ? 1 : 0
@@ -96,8 +72,6 @@ resource "azurerm_application_gateway" "frontend" {
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
-
-  firewall_policy_id  = azurerm_web_application_firewall_policy.frontend[0].id
 
   sku {
     name     = "WAF_v2"
@@ -158,6 +132,13 @@ resource "azurerm_application_gateway" "frontend" {
     protocol            = "Http"
     port                = var.application_port
     path                = var.health_probe_path
+  }
+
+  waf_configuration {
+    enabled          = true
+    firewall_mode    = "Prevention"
+    rule_set_type    = "OWASP"
+    rule_set_version = "3.2"
   }
 }
 
@@ -223,7 +204,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
   instances           = var.instance_count
   admin_username      = var.admin_username
   custom_data         = base64encode(local.provisioning_script_content)
-  upgrade_mode        = "Rolling"
+  upgrade_mode        = "Automatic"
   health_probe_id     = var.is_frontend ? null : azurerm_lb_probe.backend[0].id
   tags                = var.tags
 
@@ -294,11 +275,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
       application_gateway_backend_address_pool_ids = var.is_frontend ? [for pool in azurerm_application_gateway.frontend[0].backend_address_pool : pool.id] : null
     }
   }
-
-  depends_on = [
-    azurerm_lb_rule.backend,
-    azurerm_lb_probe.backend
-  ]
 }
 
 # Auto-scaling settings - moved to a separate resource as required by provider version 4.27.0
